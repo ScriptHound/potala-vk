@@ -7,7 +7,7 @@ import org.json4s.native.JsonMethods._
 import org.potala.const._
 import sttp.model.Uri
 
-case class Groups()
+class Groups()
 
 case class Response(val response: ResponseMap)
 case class ResponseMap(
@@ -18,17 +18,6 @@ case class ResponseMap(
 object Groups {
     // TODO must return key, server and ts, all are String t
     // type, also create global constant for basic vk url
-    def makeRequestURL(
-            token: String,
-            method: String,
-            args: Map[String, Any] = Map("" -> "")): Uri = {
-
-        val queryArgs = args.toList match {
-            case List(("", "")) => ""
-            case _ => args
-        }
-        uri"$VK_URL$method?access_token=$token&$queryArgs&v=5.131"
-    }
 
     def getLongPollServer(token: String, groupId: Int) = {
         val method = "groups.getLongPollServer"
@@ -40,4 +29,5 @@ object Groups {
         val data = parsedJSON.extract[Response]
         (data.response.key, data.response.server, data.response.ts)
     }
+
 }

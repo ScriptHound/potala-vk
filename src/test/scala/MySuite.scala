@@ -6,8 +6,10 @@ import org.json4s._
 import org.json4s.native.JsonMethods._
 
 import org.potala.main.Groups.getLongPollServer
+import org.potala.main.LongPollServer.pollOnce
 
 import java.lang.System.getenv
+import org.potala.main.LongPollServer
 
 // Check the most basic functional works okay
 class MySuite extends munit.FunSuite {
@@ -46,5 +48,18 @@ class MySuite extends munit.FunSuite {
     assert(key.isInstanceOf[String])
     assert(server.isInstanceOf[String])
     assert(ts.isInstanceOf[String])
+  }
+
+  test("pollOnce has no errors".ignore) {
+    val token = getenv("VK_TOKEN")
+    val groupId = getenv("GROUP_ID")
+    val (key, server, ts) = getLongPollServer(token, groupId.toInt)
+    val (updates, newTs) = LongPollServer.pollOnce(server, key, ts)
+    var currentTs = newTs
+    while (true) {
+      val (newUpdates, tempTs) = LongPollServer.pollOnce(server, key, currentTs)
+      currentTs = tempTs
+      println(newUpdates)
+    }
   }
 }

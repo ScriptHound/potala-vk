@@ -13,4 +13,16 @@ package object const {
         val backend = HttpClientSyncBackend()
         request.send(backend)
     }
+
+    def makeRequestURL(
+            token: String,
+            method: String,
+            args: Map[String, Any] = Map("" -> "")): Uri = {
+
+        val queryArgs = args.toList match {
+            case List(("", "")) => ""
+            case _ => args
+        }
+        uri"$VK_URL$method?access_token=$token&$queryArgs&v=5.131"
+    }
 }
